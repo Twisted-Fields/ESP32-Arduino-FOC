@@ -93,6 +93,19 @@ void* _configure3PWM(long pwm_frequency, const int pinA, const int pinB, const i
  */
 void* _configure4PWM(long pwm_frequency, const int pin1A, const int pin1B, const int pin2A, const int pin2B);
 
+/**
+ *  Configuring PWM frequency, resolution and alignment
+ * - Brushed DC motor driver - 4PWM 
+ * - hardware specific
+ * 
+ * @param pwm_frequency - frequency in hertz - if applicable
+ * @param pinA_h pinA high-side brushed dc driver
+ * @param pinA_l pinA low-side brushed dc driver
+ * @param pinB_h pinA high-side brushed dc driver
+ * @param pinB_l pinA low-side brushed dc driver
+ */
+void* _configure4PWM_DCMotor(long pwm_frequency, float dead_zone, const int pinA_h, const int pinA_l, const int pinB_h, const int pinB_l);
+
 /** 
  * Configuring PWM frequency, resolution and alignment
  * - BLDC driver - 6PWM setting
@@ -158,6 +171,8 @@ void _writeDutyCycle3PWM(float dc_a,  float dc_b, float dc_c, void* params);
  */ 
 void _writeDutyCycle4PWM(float dc_1a,  float dc_1b, float dc_2a, float dc_2b, void* params);
 
+
+void _writeDutyCycle4PWM_DC(float dc_a,  float dc_b, void* params);
 
 /** 
  * Function setting the duty cycle to the pwm pin (ex. analogWrite())

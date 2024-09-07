@@ -150,6 +150,22 @@ void* _configure4PWM(long pwm_frequency,const int pinA, const int pinB, const in
   }
 }
 
+void* _configure4PWM_DCMotor(long pwm_frequency, float dead_zone, const int pinA, const int pinB, const int pinC, const int pinD){
+  // almost identical to _configure6PWM
+  if(!pwm_frequency || !_isset(pwm_frequency) ) pwm_frequency = _PWM_FREQUENCY; // default frequency 25hz
+  else pwm_frequency = _constrain(pwm_frequency, 0, _PWM_FREQUENCY_MAX); // constrain to 40kHz max
+
+  int group, timer;
+  if(!_findBestGroup(4, pwm_frequency, &group, &timer)) {
+    SIMPLEFOC_ESP32_DRV_DEBUG("Not enough pins available for 4PWM!");
+    return SIMPLEFOC_DRIVER_INIT_FAILED;
+  }
+  SIMPLEFOC_ESP32_DRV_DEBUG("Configuring 4PWM in group: "+String(group)+" on timer: "+String(timer));
+  // configure the timer
+  int pins[4] = {pinA,  pinB, pinC, pinD};
+  return _configure4PWMPinsMCPWM(pwm_frequency, group, timer, dead_zone, pins);
+}
+
 
 void* _configure6PWM(long pwm_frequency, float dead_zone, const int pinA_h, const int pinA_l,  const int pinB_h, const int pinB_l, const int pinC_h, const int pinC_l){
   if(!pwm_frequency || !_isset(pwm_frequency) ) pwm_frequency = _PWM_FREQUENCY; // default frequency 25hz
@@ -201,6 +217,18 @@ void _writeDutyCycle4PWM(float dc_1a,  float dc_1b, float dc_2a, float dc_2b, vo
   _setDutyCycle(((ESP32MCPWMDriverParams*)params)->comparator[2], ((ESP32MCPWMDriverParams*)params)->mcpwm_period, dc_2a);
   _setDutyCycle(((ESP32MCPWMDriverParams*)params)->comparator[3], ((ESP32MCPWMDriverParams*)params)->mcpwm_period, dc_2b);
 }
+
+
+// function setting the pwm duty cycle to the hardware
+// - Stepper motor - 4PWM setting
+// - hardware specific
+void _writeDutyCycle4PWM_DC(float dc_a, float dc_b, void* params){
+  // se the PWM on the slot timers
+  _setDutyCycle(((ESP32MCPWMDriverParams*)params)->comparator[0], ((ESP32MCPWMDriverParams*)params)->mcpwm_period, dc_a);
+  _setDutyCycle(((ESP32MCPWMDriverParams*)params)->comparator[1], ((ESP32MCPWMDriverParams*)params)->mcpwm_period, dc_b);
+}
+
+
 
 void _writeDutyCycle6PWM(float dc_a,  float dc_b, float dc_c, PhaseState *phase_state, void* params){
 #if SIMPLEFOC_ESP32_HW_DEADTIME == true

@@ -1,5 +1,7 @@
 {
     "build": {
       "libArchive": false
-    }
+    },
+    "name": "Simple FOC",
+    "version": "2.3.4" 
 }

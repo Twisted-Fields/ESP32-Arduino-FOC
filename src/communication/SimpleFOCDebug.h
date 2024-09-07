@@ -4,7 +4,6 @@
 
 #include "Arduino.h"
 
-
 /**
  * SimpleFOCDebug class
  * 
