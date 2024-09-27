@@ -609,10 +609,6 @@ void* _configurePinsMCPWM(long pwm_frequency, int mcpwm_group, int timer_no, int
 // function setting the duty cycle to the MCPWM pin
 void _setDutyCycle(mcpwm_cmpr_handle_t cmpr, uint32_t mcpwm_period, float duty_cycle){
   float duty = _constrain(duty_cycle, 0.0, 1.0);
-  Serial.println("Setting duty: " + String(duty));
-  Serial.println("mcpwm_period: " + String(mcpwm_period));
-  Serial.println("new compare value: " + String(mcpwm_period*duty));
-
   mcpwm_comparator_set_compare_value(cmpr, (uint32_t)(mcpwm_period*duty));
 }
 
