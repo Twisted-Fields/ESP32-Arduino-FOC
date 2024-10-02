@@ -1,5 +1,3 @@
-
-
 #include "./DCDriver4PWM.h"
 
 
@@ -28,7 +26,9 @@ int DCDriver4PWM::init() {
     pinMode(pinA_l, OUTPUT);
     pinMode(pinB_h, OUTPUT);
     pinMode(pinB_l, OUTPUT);
-    pwm_frequency = 50000;
+
+    if (pwm_frequency==NOT_SET) { pwm_frequency = 50000; };
+
     params = _configure4PWM_DCMotor(pwm_frequency, dead_zone, pinA_h, pinA_l, pinB_h, pinB_l);
     initialized = (params!=SIMPLEFOC_DRIVER_INIT_FAILED);
     return params!=SIMPLEFOC_DRIVER_INIT_FAILED;
@@ -37,20 +37,17 @@ int DCDriver4PWM::init() {
 
 
 void DCDriver4PWM::setPwm(float U) {
-    // TODO off before on or hald-bridge dead-time insertion?
+    // TODO off before on or half-bridge dead-time insertion?
     // TODO dead-time insertion
     if (U>0.0f) {
         U = _constrain(U, 0.0f, voltage_limit);
         U = _constrain(U/voltage_power_supply,0.0f,1.0f);
-        // _writeDutyCycle4PWM(U, 0.0f, 0.0f, 1.0f, params);
         _writeDutyCycle4PWM_DC(U, 0.0f, params);
     } else if (U<0.0f) {
         U = _constrain(-U, 0.0f, voltage_limit);
         U = _constrain(U/voltage_power_supply,0.0f,1.0f);
-        // _writeDutyCycle4PWM(0.0f, 1.0f, U, 0.0f, params);
         _writeDutyCycle4PWM_DC(0.0f, U, params);
     } else {
-        // _writeDutyCycle4PWM(0.0f, 0.0f, 0.0f, 0.0f, params);
         _writeDutyCycle4PWM_DC(0.0f, 0.0f, params);
     }
 };

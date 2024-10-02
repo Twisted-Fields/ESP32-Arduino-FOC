@@ -422,9 +422,7 @@ void* _configure4PWMPinsMCPWM(long pwm_frequency, int mcpwm_group, int timer_no,
   mcpwm_comparator_config_t comparator_config = {0};
   comparator_config.flags.update_cmp_on_tez = true;
   for (int i = 0; i < no_operators; i++) {
-    Serial.println("Creating comparator: " + String(i) + " in hardware dead-time");
     CHECK_ERR(mcpwm_new_comparator(params->oper[i], &comparator_config, &params->comparator[i]),"Could not create comparator: " + String(i));
-    Serial.print("setting compare value: " + String(0));
     CHECK_ERR(mcpwm_comparator_set_compare_value(params->comparator[i], (0)), "Could not set duty on comparator: " + String(i));
   }
 
